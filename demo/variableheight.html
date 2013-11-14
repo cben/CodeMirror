@@ -12,13 +12,13 @@
       .CodeMirror {border: 1px solid silver; border-width: 1px 2px; }
       pre.cm-header { font-family: arial; }
       /* Match h1..h6 default sizes in WebKit, Mozilla & IE as of 2013. */
-      pre.cm-header1 { font-size: 2.00em; }
-      pre.cm-header2 { font-size: 1.50em; }
-      pre.cm-header3 { font-size: 1.17em; }
-      pre.cm-header4 { font-size: 1.00em; }
-      pre.cm-header5 { font-size: 0.83em; }
-      pre.cm-header6 { font-size: 0.67em; }
       .cm-strong { font-size: 140%; }
+      pre.cm-header1 { font-size: 2.00em; margin: 0.67em 0; }
+      pre.cm-header2 { font-size: 1.50em; margin: 0.83em 0; }
+      pre.cm-header3 { font-size: 1.17em; margin: 1.00em 0; }
+      pre.cm-header4 { font-size: 1.00em; margin: 1.33em 0; }
+      pre.cm-header5 { font-size: 0.83em; margin: 1.67em 0; }
+      pre.cm-header6 { font-size: 0.67em; margin: 2.33em 0; }
     </style>
 <div id=nav>
   <a href="http://codemirror.net"><img id=logo src="../doc/logo.png"></a>
@@ -35,7 +35,7 @@
 
 <article>
 <h2>Variable Height Demo</h2>
-<form><textarea id="code" name="code"># A First Level Header
+<form><textarea id="code" name="code"># A First Level Header **bigger?**
 
 **Bold** text in a normal-size paragraph.
 
