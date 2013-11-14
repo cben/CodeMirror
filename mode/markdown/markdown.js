@@ -54,7 +54,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
 
   var codeDepth = 0;
 
-  var header   = 'header'
+  var header   = 'line-cm-header'
   ,   code     = 'comment'
   ,   quote1   = 'atom'
   ,   quote2   = 'number'
