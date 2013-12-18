@@ -4,14 +4,23 @@
     var outer = CodeMirror.getMode({}, "markdown");
 
     var innerOptions = {
-      open: '$',
-      close: '$',
+      open: '$$',
+      close: '$$',
       mode: inner,
       delimStyle: 'delim',
       innerStyle: 'inner'
     };
 
-    return CodeMirror.multiplexingMode(outer, innerOptions);
+    var innerOptionsCombining = {
+      open: '$',
+      close: '$',
+      mode: inner,
+      delimStyle: 'delim',
+      innerStyle: 'inner',
+      textForOuter: '~'
+    };
+
+    return CodeMirror.multiplexingMode(outer, innerOptions, innerOptionsCombining);
   });
 
   var mode = CodeMirror.getMode({}, "markdown_with_stex");
@@ -26,5 +35,25 @@
 
   MT(
     "stexInsideMarkdown",
-    "[strong **Equation:**] [delim $][inner&tag \\pi][delim $]");
+    "foo [delim $$][inner&tag \\pi][delim $$] bar [delim $$][inner&tag \\pi][delim $$] baz");
+  MT(
+    "stexInsideMarkdownNoCombine",
+    "[strong **Equation: ][delim $$][inner&tag \\pi][delim $$][strong  is beautiful.**]");
+  MT(
+    "stexLineInsideMarkdownNoCombine",
+    "[strong **Equation:]",
+    "[delim $$][inner&tag \\pi][delim $$]",
+    "[strong is beautiful.**]");
+  MT(
+    "stexInsideMarkdownCombine",
+    "[strong **Equation: ][strong&delim $][strong&inner&tag \\pi][strong&delim $][strong  is beautiful.**]");
+  MT(
+    "stexLineInsideMarkdownCombine",
+    "[strong **XEquation: ]",
+    "[strong&delim $][strong&inner&tag \\pi][strong&delim $]",
+    "[strong is beautiful.**]");
+  MT(
+    "stexLineAfterMarkdownHeaderCombine",
+    "[header&header1 # Equation]",
+    "[delim $][inner&tag \\pi][delim $]");
 })();

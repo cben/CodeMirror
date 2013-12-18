@@ -1,5 +1,5 @@
 CodeMirror.multiplexingMode = function(outer /*, others */) {
-  // Others should be {open, close, mode [, delimStyle] [, innerStyle]} objects
+  // Others should be {open, close, mode [, delimStyle] [, innerStyle] [, textForOuter]} objects
   var others = Array.prototype.slice.call(arguments, 1);
   var n_others = others.length;
 
@@ -13,6 +13,7 @@ CodeMirror.multiplexingMode = function(outer /*, others */) {
     startState: function() {
       return {
         outer: CodeMirror.startState(outer),
+        outerStyle: '',
         innerActive: null,
         inner: null
       };
@@ -21,29 +22,40 @@ CodeMirror.multiplexingMode = function(outer /*, others */) {
     copyState: function(state) {
       return {
         outer: CodeMirror.copyState(outer, state.outer),
+        outerStyle: state.outerStyle,
         innerActive: state.innerActive,
         inner: state.innerActive && CodeMirror.copyState(state.innerActive.mode, state.inner)
       };
     },
 
     token: function(stream, state) {
+      if (stream.sol()) console.log('\n' + stream.string);
+      console.log(state);
       if (!state.innerActive) {
-        var cutOff = Infinity, oldContent = stream.string;
+        var cutOff = Infinity, textForOuter = '', oldContent = stream.string;
         for (var i = 0; i < n_others; ++i) {
           var other = others[i];
           var found = indexOf(oldContent, other.open, stream.pos);
-          if (found == stream.pos) {
-            stream.match(other.open);
-            state.innerActive = other;
-            state.inner = CodeMirror.startState(other.mode, outer.indent ? outer.indent(state.outer, "") : 0);
-            return other.delimStyle;
-          } else if (found != -1 && found < cutOff) {
-            cutOff = found;
+
+          if (found != -1) {
+            if(stream.pos >= found + textForOuter.length) {
+              stream.match(other.open) || console.error("FAIL");
+              state.innerActive = other;
+              state.inner = CodeMirror.startState(other.mode, outer.indent ? outer.indent(state.outer, "") : 0);
+              return other.delimStyle + state.outerStyle;
+            } else if (found < cutOff) {
+              cutOff = found;
+              textForOuter = other.textForOuter || '';
+            }
           }
         }
-        if (cutOff != Infinity) stream.string = oldContent.slice(0, cutOff);
-        var outerToken = outer.token(stream, state.outer);
+        if (cutOff != Infinity) stream.string = oldContent.slice(0, cutOff) + textForOuter;
+        var p1 = stream.pos;
+	var outerToken = outer.token(stream, state.outer);
+        var p2 = stream.pos, s = stream.string;
+        console.log(s.slice(0, p1) + '[' + s.slice(p1, p2) + ']' + s.slice(p2), '->', outerToken);
         if (cutOff != Infinity) stream.string = oldContent;
+	state.outerStyle = textForOuter ? ' ' + outerToken : '';
         return outerToken;
       } else {
         var curInner = state.innerActive, oldContent = stream.string;
@@ -53,9 +65,9 @@ CodeMirror.multiplexingMode = function(outer /*, others */) {
         }
         var found = curInner.close ? indexOf(oldContent, curInner.close, stream.pos) : -1;
         if (found == stream.pos) {
-          stream.match(curInner.close);
+          stream.match(curInner.close) || console.error("FAIL");
           state.innerActive = state.inner = null;
-          return curInner.delimStyle;
+          return curInner.delimStyle + state.outerStyle;
         }
         if (found > -1) stream.string = oldContent.slice(0, found);
         var innerToken = curInner.mode.token(stream, state.inner);
@@ -66,7 +78,7 @@ CodeMirror.multiplexingMode = function(outer /*, others */) {
           else innerToken = curInner.innerStyle;
         }
 
-        return innerToken;
+        return innerToken + state.outerStyle;
       }
     },
 
