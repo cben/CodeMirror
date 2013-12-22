@@ -29,34 +29,45 @@ CodeMirror.multiplexingMode = function(outer /*, others */) {
     },
 
     token: function(stream, state) {
+      function logtoken(mode, stream, state) {
+        var p1 = stream.pos;
+	var token = mode.token(stream, state);
+        var p2 = stream.pos, s = stream.string;
+        console.log(mode.name, s.slice(0, p1) + '[' + s.slice(p1, p2) + ']' + s.slice(p2), '->', token);
+        return token;
+      }
+
       if (stream.sol()) console.log('\n' + stream.string);
       console.log(state);
       if (!state.innerActive) {
-        var cutOff = Infinity, textForOuter = '', oldContent = stream.string;
+        var cutOff = Infinity, innerActive = null, oldContent = stream.string;
         for (var i = 0; i < n_others; ++i) {
           var other = others[i];
           var found = indexOf(oldContent, other.open, stream.pos);
 
           if (found != -1) {
-            if(stream.pos >= found + textForOuter.length) {
-              stream.match(other.open) || console.error("FAIL");
-              state.innerActive = other;
-              state.inner = CodeMirror.startState(other.mode, outer.indent ? outer.indent(state.outer, "") : 0);
-              return other.delimStyle + state.outerStyle;
-            } else if (found < cutOff) {
+            if (found < cutOff) {
               cutOff = found;
-              textForOuter = other.textForOuter || '';
+              innerActive = other; 
             }
           }
         }
-        if (cutOff != Infinity) stream.string = oldContent.slice(0, cutOff) + textForOuter;
-        var p1 = stream.pos;
-	var outerToken = outer.token(stream, state.outer);
-        var p2 = stream.pos, s = stream.string;
-        console.log(s.slice(0, p1) + '[' + s.slice(p1, p2) + ']' + s.slice(p2), '->', outerToken);
-        if (cutOff != Infinity) stream.string = oldContent;
-	state.outerStyle = textForOuter ? ' ' + outerToken : '';
-        return outerToken;
+        if (cutOff == Infinity) {
+          return logtoken(outer, stream, state.outer); //outer.token(stream, state.outer);
+        } else if (stream.pos < cutOff) {
+          // Not yet entering inner mode but can't see whole line.
+          var textForOuter = innerActive.textForOuter || '';
+          stream.string = oldContent.slice(0, cutOff) + textForOuter;
+	  var outerToken = logtoken(outer, stream, state.outer); //outer.token(stream, state.outer);
+          stream.string = oldContent;
+	  //state.outerStyle = textForOuter ? ' ' + outerToken : '';
+          return outerToken;
+        } else { // Entering inner mode.
+          stream.match(innerActive.open) || console.error("FAIL");
+          state.innerActive = innerActive;
+          state.inner = CodeMirror.startState(other.mode, outer.indent ? outer.indent(state.outer, "") : 0);
+          return innerActive.delimStyle + state.outerStyle;
+        }
       } else {
         var curInner = state.innerActive, oldContent = stream.string;
         if (!curInner.close && stream.sol()) {
@@ -70,7 +81,7 @@ CodeMirror.multiplexingMode = function(outer /*, others */) {
           return curInner.delimStyle + state.outerStyle;
         }
         if (found > -1) stream.string = oldContent.slice(0, found);
-        var innerToken = curInner.mode.token(stream, state.inner);
+        var innerToken = logtoken(curInner.mode, stream, state.inner); //curInner.mode.token(stream, state.inner);
         if (found > -1) stream.string = oldContent;
 
         if (curInner.innerStyle) {
