@@ -41,15 +41,14 @@ CodeMirror.multiplexingMode = function(outer /*, others */) {
       console.log(state);
       if (!state.innerActive) {
         var cutOff = Infinity, innerActive = null, oldContent = stream.string;
+        // Looking ahead every time we're here is O(n**2) on long lines but we can't cache it
+        // because state shouldn't depend on things after the current point.
         for (var i = 0; i < n_others; ++i) {
           var other = others[i];
           var found = indexOf(oldContent, other.open, stream.pos);
-
-          if (found != -1) {
-            if (found < cutOff) {
-              cutOff = found;
-              innerActive = other;
-            }
+          if (found != -1 && found < cutOff) {
+            cutOff = found;
+            innerActive = other;
           }
         }
         if (cutOff == Infinity) {
