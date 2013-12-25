@@ -3,6 +3,8 @@
     var inner = CodeMirror.getMode({}, "stex");
     var outer = CodeMirror.getMode({}, "markdown");
 
+    // This difference in textForOuter between $$..$$ and $..$ is arbitrary,
+    // we simply need to test both behaviors.
     var innerOptions = {
       open: '$$',
       close: '$$',
@@ -10,7 +12,6 @@
       delimStyle: 'delim',
       innerStyle: 'inner'
     };
-
     var innerOptionsCombining = {
       open: '$',
       close: '$',
