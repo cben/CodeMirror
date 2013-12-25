@@ -56,13 +56,23 @@ CodeMirror.multiplexingMode = function(outer /*, others */) {
           return logtoken(outer, stream, state.outer); //outer.token(stream, state.outer);
         } else if (stream.pos < cutOff) {
           // Not yet entering inner mode but can't see whole line.
-          var textForOuter = innerActive.textForOuter || '';
-          stream.string = oldContent.slice(0, cutOff) + textForOuter;
+          stream.string = oldContent.slice(0, cutOff);
 	  var outerToken = logtoken(outer, stream, state.outer); //outer.token(stream, state.outer);
           stream.string = oldContent;
 	  //state.outerStyle = textForOuter ? ' ' + outerToken : '';
           return outerToken;
-        } else { // Entering inner mode.
+        } else {
+          // Entering inner mode.
+          var textForOuter = innerActive.textForOuter || '';
+          if (textForOuter) {
+            stream.string = oldContent.slice(0, cutOff) + textForOuter;
+            var outerStyle = logtoken(outer, stream, state.outer);
+            state.outerStyle = outerStyle == null ? '' : ' ' + outerStyle;
+            stream.backUp(stream.current().length);
+            stream.string = oldContent;
+          } else {
+            state.outerStyle = '';
+          }
           stream.match(innerActive.open) || console.error("FAIL");
           state.innerActive = innerActive;
           state.inner = CodeMirror.startState(other.mode, outer.indent ? outer.indent(state.outer, "") : 0);
