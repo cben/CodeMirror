@@ -53,25 +53,25 @@ CodeMirror.multiplexingMode = function(outer /*, others */) {
         }
         if (cutOff == Infinity) {
           return logtoken(outer, stream, state.outer); //outer.token(stream, state.outer);
-        } else if (stream.pos < cutOff) {
-          // Not yet entering inner mode but can't see whole line.
-          stream.string = oldContent.slice(0, cutOff);
-          var outerToken = logtoken(outer, stream, state.outer); //outer.token(stream, state.outer);
-          stream.string = oldContent;
-          //state.outerStyle = textForOuter ? ' ' + outerToken : '';
-          return outerToken;
         } else {
-          // Entering inner mode.
+          console.log(stream.pos, cutOff);
           var textForOuter = innerActive.textForOuter || '';
-          if (textForOuter) {
+          var pos = stream.pos;
+          if (pos < cutOff + textForOuter.length) {
+            // Not yet entering inner mode but can't see whole line.
             stream.string = oldContent.slice(0, cutOff) + textForOuter;
-            var outerStyle = logtoken(outer, stream, state.outer);
-            state.outerStyle = outerStyle == null ? '' : ' ' + outerStyle;
-            stream.backUp(stream.current().length);
+            var outerToken = logtoken(outer, stream, state.outer); //outer.token(stream, state.outer);
             stream.string = oldContent;
-          } else {
-            state.outerStyle = '';
+            if (pos < cutOff) {
+              state.outerStyle = '';
+              return outerToken;
+            }
+            // Don't return this token, fall through to entering inner mode.
+            state.outerStyle = outerToken ? ' ' + outerToken : '';
+            stream.backUp(stream.current().length);
           }
+          // Entering inner mode.
+          console.log(stream.start, stream.pos, stream.string.slice(stream.pos));
           stream.match(innerActive.open) || console.error("FAIL");
           state.innerActive = innerActive;
           state.inner = CodeMirror.startState(other.mode, outer.indent ? outer.indent(state.outer, "") : 0);
