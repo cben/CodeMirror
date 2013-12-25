@@ -31,7 +31,7 @@ CodeMirror.multiplexingMode = function(outer /*, others */) {
     token: function(stream, state) {
       function logtoken(mode, stream, state) {
         var p1 = stream.pos;
-	var token = mode.token(stream, state);
+        var token = mode.token(stream, state);
         var p2 = stream.pos, s = stream.string;
         console.log(mode.name, s.slice(0, p1) + '[' + s.slice(p1, p2) + ']' + s.slice(p2), '->', token);
         return token;
@@ -48,7 +48,7 @@ CodeMirror.multiplexingMode = function(outer /*, others */) {
           if (found != -1) {
             if (found < cutOff) {
               cutOff = found;
-              innerActive = other; 
+              innerActive = other;
             }
           }
         }
@@ -57,9 +57,9 @@ CodeMirror.multiplexingMode = function(outer /*, others */) {
         } else if (stream.pos < cutOff) {
           // Not yet entering inner mode but can't see whole line.
           stream.string = oldContent.slice(0, cutOff);
-	  var outerToken = logtoken(outer, stream, state.outer); //outer.token(stream, state.outer);
+          var outerToken = logtoken(outer, stream, state.outer); //outer.token(stream, state.outer);
           stream.string = oldContent;
-	  //state.outerStyle = textForOuter ? ' ' + outerToken : '';
+          //state.outerStyle = textForOuter ? ' ' + outerToken : '';
           return outerToken;
         } else {
           // Entering inner mode.
