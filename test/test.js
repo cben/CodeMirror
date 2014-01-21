@@ -13,14 +13,25 @@ function addDoc(cm, width, height) {
   cm.setValue(content.join("\n"));
 }
 
+function byTagName(elt, tag) {
+  if (elt.getElementsByTagName) return elt.getElementsByTagName(tag);
+  var found = [], tagUpperCase = tag.toUpperCase();
+  function search(elt) {
+    if (elt.nodeType == 3) return;
+    if (elt.nodeName.toUpperCase() == tagUpperCase) found.push(elt);
+    forEach(elt.childNodes, search);
+  }
+  search(elt);
+  return found;
+}
+
 function byClassName(elt, cls) {
   if (elt.getElementsByClassName) return elt.getElementsByClassName(cls);
   var found = [], re = new RegExp("\\b" + cls + "\\b");
   function search(elt) {
     if (elt.nodeType == 3) return;
     if (re.test(elt.className)) found.push(elt);
-    for (var i = 0, e = elt.childNodes.length; i < e; ++i)
-      search(elt.childNodes[i]);
+    forEach(elt.childNodes, search);
   }
   search(elt);
   return found;
@@ -1636,14 +1647,14 @@ testCM("lineStyleFromMode", function(cm) {
   eq(bracketElts.length, 1);
   eq(bracketElts[0].nodeName, "PRE");
   is(!/brackets.*brackets/.test(bracketElts[0].className));
-  eq(bracketElts[0].getElementsByTagName("span").length, 0);
+  eq(byTagName(bracketElts[0], "SPAN").length, 0);
 
   var parenElts = byClassName(cm.getWrapperElement(), "parens");
   eq(parenElts.length, 1);
   eq(parenElts[0].nodeName, "DIV");
   is(!/parens.*parens/.test(parenElts[0].className));
   eq(parenElts[0].parentElement.nodeName, "DIV");
-  eq(parenElts[0].parentElement.getElementsByTagName("span").length, 0);
+  eq(byTagName(parenElts[0].parentElement, "SPAN").length, 0);
 
   eq(byClassName(cm.getWrapperElement(), "bg").length, 1);
   eq(byClassName(cm.getWrapperElement(), "line").length, 1);
