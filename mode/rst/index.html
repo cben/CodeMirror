@@ -8,6 +8,8 @@
 <script src="../../lib/codemirror.js"></script>
 <script src="rst.js"></script>
 <script src="../../addon/mode/overlay.js"></script>
+<script src="../python/python.js"></script>
+<script src="../stex/stex.js"></script>
 <style type="text/css">.CodeMirror {border-top: 1px solid black; border-bottom: 1px solid black;}</style>
 <div id=nav>
   <a href="http://codemirror.net"><img id=logo src="../../doc/logo.png"></a>
@@ -26,7 +28,11 @@
 <article>
 <h2>reStructuredText mode</h2>
 <form><textarea id="code" name="code">
-.. This is an excerpt from Sphinx documentation: http://sphinx.pocoo.org/_sources/rest.txt
+Inline :math:`e^{\tau i} = 1` example.
+
+    >>> print("Embedded python example")
+
+.. The following is an excerpt from Sphinx documentation: http://sphinx.pocoo.org/_sources/rest.txt
 
 .. highlightlang:: rest
 
@@ -519,6 +525,7 @@ There are some problems one commonly runs into while authoring reST documents:
     <script>
       var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
         lineNumbers: true,
+        mode: "rst"
       });
     </script>
     <p>
