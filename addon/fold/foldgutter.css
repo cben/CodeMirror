@@ -12,10 +12,11 @@
 .CodeMirror-foldgutter-folded {
   color: #555;
   cursor: pointer;
+  font-family: "Lucida Sans Unicode", arial;
 }
 .CodeMirror-foldgutter-open:after {
-  content: "\25BE";
+  content: "\25BC";
 }
 .CodeMirror-foldgutter-folded:after {
-  content: "\25B8";
+  content: "\25B6";
 }
