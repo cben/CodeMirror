@@ -119,6 +119,7 @@
       if (line == "" && mode.blankLine) mode.blankLine(state);
       /* Start copied code from CodeMirror.highlight */
       while (!stream.eol()) {
+        state = CodeMirror.copyState(mode, state); // added for aggressive testing
         var compare = mode.token(stream, state), substr = stream.current();
         if (stream.start >= stream.pos)
           throw new Failure("Failed to advance the stream." + stream.string + " " + stream.pos);
