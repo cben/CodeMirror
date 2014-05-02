@@ -93,6 +93,14 @@
   MT("codeBlocksUsing1Tab",
      "\t[comment foo]");
 
+  // Code blocks with blank indented lines.
+  MT("codeBlockWhitespaceLine",
+     "    [comment foo]",
+     "    ",
+     "    [comment bar]",
+     "    ",
+     "quux");
+
   // Inline code using backticks
   MT("inlineCodeUsingBackticks",
      "foo [comment `bar`]");
