@@ -12,7 +12,8 @@ if [ "$(basename "$0")" != build-releases.tmp.sh ]; then
   exec ./build-releases.tmp.sh
 fi
 
-for tag in $(git tag --list | grep -v -e '-build$'); do
+# Building only became necessary >= 5.20, can safely skip versions <5.0.
+for tag in $(git tag --list | egrep -v '^v?[234]\.' | (sort --version-sort || cat) | grep -v -e '-build$'); do
   echo
 
   # Skip already built tags, so I can re-run after `git fetch`ing new upstream releases.
