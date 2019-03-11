@@ -14,23 +14,27 @@ fi
 
 for tag in $(git tag --list | grep -v -e '-build$'); do
   echo
-  echo "== $tag =="
-  git reset --hard
-  git checkout "$tag"
-  git clean -x -d --force --exclude=build-releases.tmp.sh
-  cp build-releases.tmp.sh build-releases.sh
-  chmod 755 build-releases.sh
-
-  if git ls-files lib/codemirror.js | grep lib/codemirror.js; then
-    continue
-  fi
 
   # Skip already built tags, so I can re-run after `git fetch`ing new upstream releases.
   newtag="$tag-build"
   if git tag --list "$newtag" | grep "$newtag"; then
-     echo "Skipping existing tag $newtag (delete tag to force rebuild)"
+     echo "-- $tag -- Skipping existing tag (\`git tag --delete $newtag\` to force rebuild) --"
      continue
   fi
+
+  git checkout --quiet "$tag"
+
+  if git ls-files lib/codemirror.js | grep lib/codemirror.js; then
+    echo "-- $tag -- Skipping, at this version building was unnecessary --"
+    continue
+  fi
+
+  echo "== $tag =="
+
+  git reset --hard
+  git clean -x -d --force --exclude=build-releases.tmp.sh
+  cp build-releases.tmp.sh build-releases.sh
+  chmod 755 build-releases.sh
 
   git status --ignored
 
