@@ -163,6 +163,7 @@ function findSequence(goal) {
   });
   var input = document.getElementById("select");
   function selectTheme() {
+    console.log("index", input.selectedIndex)
     var theme = input.options[input.selectedIndex].textContent;
     editor.setOption("theme", theme);
     location.hash = "#" + encodeURIComponent(theme);
@@ -171,12 +172,14 @@ function findSequence(goal) {
                 decodeURIComponent(location.hash.slice(1))) ||
                (document.location.search &&
                 decodeURIComponent(document.location.search.slice(1)));
+  console.log("choice:", location.hash, document.location.search)
   if (choice) {
     input.value = choice;
     editor.setOption("theme", choice);
   }
   CodeMirror.on(window, "hashchange", function() {
     var theme = decodeURIComponent(location.hash.slice(1));
+    console.log("hashchange", location.hash, location.href)
     if (theme) { input.value = theme; selectTheme(); }
   });
 </script>
