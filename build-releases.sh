@@ -17,6 +17,13 @@ fi
 # Fetch them both to avoid repeating builds I already pushed.
 git fetch --all --tags
 
+if [ -n "$(git status --porcelain --ignored | grep -v ' build-releases.tmp.sh$')" ]; then
+  echo "ERROR: you have modified/untracked files that would be lost:"
+  git clean -x -d --exclude=build-releases.tmp.sh --dry-run
+  echo "Commit or clean everything, then re-run this script."
+  exit 1
+fi
+
 # Building only became necessary >= 5.20, can safely skip versions <5.0.
 for tag in $(git tag --list | egrep -v '^v?[234]\.' | (sort --version-sort || cat) | grep -v -e '-build$'); do
   echo
@@ -38,7 +45,7 @@ for tag in $(git tag --list | egrep -v '^v?[234]\.' | (sort --version-sort || ca
   echo "== $tag =="
 
   git reset --hard
-  git clean -x -d --force --exclude=build-releases.tmp.sh
+  git clean -x -d --exclude=build-releases.tmp.sh --force
   cp build-releases.tmp.sh build-releases.sh
   chmod 755 build-releases.sh
 
