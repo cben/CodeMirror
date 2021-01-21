@@ -1,3 +1,55 @@
+lib/codemirror.js built from tag `5.22.2` using yarn 1.22.10.
+
+This is primarily useful for including CodeMirror >= 5.20 as a git submodule.
+Specifically, submodules work on GitHub Pages.
+
+You don't have to trust my build.  I recommend taking upstream CodeMirror,
+running `./build-releases.sh` yourself (latest version in my
+`build-releases` branch) and pushing the tags it creates to your own fork.
+
+build output:
+
+```bash
+$ yarn install
+yarn install v1.22.10
+info No lockfile found.
+[1/4] Resolving packages...
+warning blint > nomnom@1.8.1: Package no longer supported. Contact support@npmjs.com for more info.
+warning phantomjs-prebuilt@2.1.16: this package is now deprecated
+warning phantomjs-prebuilt > request@2.88.2: request has been deprecated, see https://github.com/request/request/issues/3142
+warning phantomjs-prebuilt > request > har-validator@5.1.5: this library is no longer supported
+warning rollup-plugin-buble@0.15.0: This module has been deprecated and is no longer maintained. Please use @rollup/plugin-buble.
+warning rollup-watch@2.5.0: rollup-watch functionality is now included in Rollup itself
+[2/4] Fetching packages...
+[3/4] Linking dependencies...
+[4/4] Building fresh packages...
+success Saved lockfile.
+$ npm run-script build
+npm WARN lifecycle The node binary used for scripts is /tmp/yarn--1611255052541-0.5234926610229336/node but npm is using /usr/bin/node itself. Use the `--scripts-prepend-node-path` option to include the path for the node binary npm was executed with.
+
+> codemirror@5.22.2 build /home/cben/md/mathdown/CodeMirror
+> rollup -c
+
+Done in 287.99s.
+$ npm list --depth=0
+codemirror@5.22.2 /home/cben/md/mathdown/CodeMirror
+├── blint@0.5.1
+├── node-static@0.6.0
+├── phantomjs-prebuilt@2.1.16
+├── rollup@0.34.13
+├── rollup-plugin-buble@0.15.0
+└── rollup-watch@2.5.0
+
+$ npm run build
+
+> codemirror@5.22.2 build /home/cben/md/mathdown/CodeMirror
+> rollup -c
+
+```
+
+----
+
+
 # CodeMirror
 [![Build Status](https://travis-ci.org/codemirror/CodeMirror.svg)](https://travis-ci.org/codemirror/CodeMirror)
 [![NPM version](https://img.shields.io/npm/v/codemirror.svg)](https://www.npmjs.org/package/codemirror)
