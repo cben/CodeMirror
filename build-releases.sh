@@ -51,7 +51,7 @@ Specifically, submodules work on GitHub Pages.
 
 You don't have to trust my build.  I recommend taking upstream CodeMirror,
 running \`./build-releases.sh\` yourself (latest version in my
- \`build-releases\` branch) and pushing the tags it creates to your own fork.
+\`build-releases\` branch) and pushing the tags it creates to your own fork.
 
 build output:
 " > build.md

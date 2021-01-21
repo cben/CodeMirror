@@ -1,3 +1,16 @@
+#### A script to push pre-built CodeMirror 5.yy.z releases to Git
+
+This is primarily useful for including CodeMirror >= 5.20 as a git submodule.
+Specifically, submodules work on GitHub Pages.
+
+I'm pushing my builds to corresponding `5.yy.z-build` tags.
+
+You don't have to trust my build!  I recommend taking upstream CodeMirror,
+running `./build-releases.sh` yourself (latest version in my
+`build-releases` branch) and pushing the tags it creates to your own fork.
+
+----
+
 # CodeMirror
 
 [![Build Status](https://travis-ci.org/codemirror/CodeMirror.svg)](https://travis-ci.org/codemirror/CodeMirror)
