@@ -12,6 +12,11 @@ if [ "$(basename "$0")" != build-releases.tmp.sh ]; then
   exec ./build-releases.tmp.sh
 fi
 
+# Typically I'll run this with 2 remotes: upstream codemirror/CodeMirror for
+# getting 5.yy.z release tags, and my fork where I'm pushing 5.yy.z-build tags.
+# Fetch them both to avoid repeating builds I already pushed.
+git fetch --all --tags
+
 # Building only became necessary >= 5.20, can safely skip versions <5.0.
 for tag in $(git tag --list | egrep -v '^v?[234]\.' | (sort --version-sort || cat) | grep -v -e '-build$'); do
   echo
